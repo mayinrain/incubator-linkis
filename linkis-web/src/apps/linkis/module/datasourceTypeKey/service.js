@@ -17,27 +17,26 @@
 
 import api from '@/common/service/api';
 
-const udfTreeBaseUrl = '/basedata-manager/udf-tree'
+const dataSourceTypeBaseUrl = '/basedata-manager/datasource-type-key'
 
 const getList = (params)=> {
-  return api.fetch(udfTreeBaseUrl, params , 'get')
+  return api.fetch(dataSourceTypeBaseUrl, params , 'get')
 }
-
-const getAll = ()=> {
-  return api.fetch(udfTreeBaseUrl+"/all",  'get')
-}
-
 
 const add = (data)=> {
-  return api.fetch(udfTreeBaseUrl, data , 'post')
+  return api.fetch(dataSourceTypeBaseUrl, data , 'post')
 }
 
 const edit = (data)=> {
-  return api.fetch(udfTreeBaseUrl, data , 'put')
+  return api.fetch(dataSourceTypeBaseUrl, data , 'put')
 }
 
 const del = (params)=> {
-  return api.fetch(`${udfTreeBaseUrl}/${params.id}`,'delete')
+  return api.fetch(`${dataSourceTypeBaseUrl}/${params.id}`,'delete')
+}
+
+const getAllEnv = () => {
+  return api.fetch(`/data-source-manager/type/all`, 'get')
 }
 
 export{
@@ -45,5 +44,5 @@ export{
   add,
   edit,
   del,
-  getAll
+  getAllEnv
 }

@@ -15,35 +15,11 @@
  * limitations under the License.
  */
 
-import api from '@/common/service/api';
 
-const udfTreeBaseUrl = '/basedata-manager/udf-tree'
-
-const getList = (params)=> {
-  return api.fetch(udfTreeBaseUrl, params , 'get')
-}
-
-const getAll = ()=> {
-  return api.fetch(udfTreeBaseUrl+"/all",  'get')
-}
-
-
-const add = (data)=> {
-  return api.fetch(udfTreeBaseUrl, data , 'post')
-}
-
-const edit = (data)=> {
-  return api.fetch(udfTreeBaseUrl, data , 'put')
-}
-
-const del = (params)=> {
-  return api.fetch(`${udfTreeBaseUrl}/${params.id}`,'delete')
-}
-
-export{
-  getList,
-  add,
-  edit,
-  del,
-  getAll
-}
+export default {
+  name: 'datasourceTypeKey',
+  data: {
+    ENVIR: process.env.NODE_ENV,
+  },
+  component: () => import('./index.vue'),
+};

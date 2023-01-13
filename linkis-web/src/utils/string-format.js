@@ -14,36 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import api from '@/common/service/api';
-
-const udfTreeBaseUrl = '/basedata-manager/udf-tree'
-
-const getList = (params)=> {
-  return api.fetch(udfTreeBaseUrl, params , 'get')
-}
-
-const getAll = ()=> {
-  return api.fetch(udfTreeBaseUrl+"/all",  'get')
-}
-
-
-const add = (data)=> {
-  return api.fetch(udfTreeBaseUrl, data , 'post')
-}
-
-const edit = (data)=> {
-  return api.fetch(udfTreeBaseUrl, data , 'put')
-}
-
-const del = (params)=> {
-  return api.fetch(`${udfTreeBaseUrl}/${params.id}`,'delete')
-}
-
-export{
-  getList,
-  add,
-  edit,
-  del,
-  getAll
+String.prototype.format = function(args) {
+  let result = this;
+  if (arguments.length < 1) {
+    return result;
+  }
+  let data = arguments;
+  if (arguments.length == 1 && typeof (args) == "object") {
+    data = args;
+  }
+  for (let key in data) {
+    let value = data[key];
+    if (undefined != value) {
+      result = result.replace("{" + key + "}", value);
+    }
+  }
+  return result;
 }

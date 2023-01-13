@@ -129,6 +129,7 @@ export default {
           {key: '1-8-2', name: this.$t('message.linkis.sideNavList.function.children.datasourceEnv'), path: '/console/datasourceEnv' },
           // {key: '1-8-3', name: this.$t('message.linkis.sideNavList.function.children.datasourceType'), path: '/console/datasourceType' },
           // {key: '1-8-4', name: this.$t('message.linkis.sideNavList.function.children.datasourceAccess'), path: '/console/datasourceAccess' },
+          {key: '1-8-5', name: this.$t('message.linkis.sideNavList.function.children.datasourceTypeKey'), path: '/console/datasourceTypeKey' },
         ]
       },
       basedataNavList: {
@@ -137,13 +138,13 @@ export default {
         padding: 0,
         icon: 'ios-options',
         children: [
-          // {key: '1-10-1', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/gatewayAuthToken'},
-          // {key: '1-10-2', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
-          // {key: '1-10-3', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider'},
-          // {key: '1-10-4', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
+          {key: '1-10-1', name: this.$t('message.linkis.sideNavList.function.children.gatewayAuthToken'), path: '/console/gatewayAuthToken'},
+          {key: '1-10-2', name: this.$t('message.linkis.sideNavList.function.children.errorCode'), path: '/console/errorCode' },
+          {key: '1-10-3', name: this.$t('message.linkis.sideNavList.function.children.rmExternalResourceProvider'), path: '/console/rmExternalResourceProvider'},
+          {key: '1-10-4', name: this.$t('message.linkis.sideNavList.function.children.EnginePluginManagement'), path: '/console/EnginePluginManagement' },
           {key: '1-10-5', name: this.$t('message.linkis.sideNavList.function.children.tenantTagManagement'), path: '/console/tenantTagManagement' },
           {key: '1-10-6', name: this.$t('message.linkis.sideNavList.function.children.ipListManagement'), path: '/console/ipListManagement' },
-          
+
         ]
       },
       urmSideNavList: {
@@ -170,13 +171,13 @@ export default {
       return path;
     },
     isEmbedInFrame() {
-      // 如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入
+      // If it is introduced by iframe top !== self returns true, used to distinguish between running alone or being introduced(如果是被iframe引入时 top !== self 返回true，用来区分单独跑还是被引入)
       return top !== self;
     }
   },
 
   created() {
-    // 根据路径显示页面的标题
+    // Display the title of the page based on the path(根据路径显示页面的标题)
     this.sideNavList.children.forEach(element => {
       if(element.path === this.$route.path) {
         this.breadcrumbSecondName = element.name
@@ -186,7 +187,7 @@ export default {
       this.breadcrumbSecondName = this.$t('message.linkis.sideNavList.function.children.codeQuery')
       this.crrentItem = '1-11'
     }
-    // 获取是否是历史管理员权限
+    // Get whether it is a historical administrator(获取是否是历史管理员权限)
     api.fetch('/jobhistory/governanceStationAdmin', 'get').then((res) => {
       this.isLogAdmin = res.admin;
       storage.set('isLogAdmin',res.admin,'session');
