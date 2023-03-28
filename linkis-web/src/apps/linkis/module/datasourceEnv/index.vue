@@ -204,7 +204,7 @@ export default {
     init() {
       this.load();
     },
-    load() {
+    async load() {
       let params = {
         searchName: this.searchName,
         currentPage: this.page.pageNow,
@@ -223,7 +223,7 @@ export default {
             let filter = options.filter(optionsItem=>{
               return optionsItem.value === item.datasourceTypeId
             })
-            item.name = filter[0]?.label || '';
+            item.name = filter[0]?.label || ''; 
           })
         })
       })
@@ -287,8 +287,8 @@ export default {
       }
       this.modalEditData.hasKeyTab = false;
     },
-    onModalOk(){
-      this.$refs.editForm.formModel.submit((formData)=>{
+    async onModalOk(){
+      this.$refs.editForm.formModel.submit(async (formData)=>{
         if (!('parameter' in formData)) {
           formData['parameter'] = {}
         }
@@ -313,7 +313,7 @@ export default {
         if('keytab' in formData) delete formData['keytab'];
         if('uris' in formData) delete formData['uris'];
         if(this.modalAddMode=='add') {
-          add(formData).then((data)=>{
+          await add(formData).then((data)=>{
             //window.console.log(data)
             if(data.result) {
               this.$Message.success({
@@ -328,7 +328,7 @@ export default {
             }
           })
         }else {
-          edit(formData).then((data)=>{
+          await edit(formData).then((data)=>{
             //window.console.log(data)
             if(data.result) {
               this.$Message.success({
@@ -347,6 +347,7 @@ export default {
         window.console.log(formData);
         this.modalLoading=false
         this.modalShow = false
+        await this.load();
       })
     },
     onModalCancel(){
