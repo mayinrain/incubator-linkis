@@ -8,7 +8,7 @@
         "lint": "vue-cli-service lint --no-fix",
         "fix": "eslint --ext .js,.vue src --fix",
         "precommit": "lint-staged",
-        "preinstall": "wnpm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
+        "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
     },
     "husky": {
         "hooks": {
@@ -18,8 +18,7 @@
     },
     "lint-staged": {
         "src/**/*.{js,vue}": [
-            "vue-cli-service lint --no-fix",
-            "git add"
+            "vue-cli-service lint --no-fix"
         ]
     },
     "dependencies": {
