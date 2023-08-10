@@ -305,21 +305,20 @@ export default {
         }
         params.pageNow = this.page.pageNow;
         params.pageSize = this.page.pageSize;
-        await api.fetch("/configuration/userKeyValue", params, "get")
-          .then((res) => {
-            this.datalist = res.configValueList.map((item) => {
-              const labelValue = item.labelValue;
-              const baseArr = labelValue.split(',');
-              const userArr = baseArr[0].split('-');
-              const engineArr = baseArr[1].split('-');
-              item.user = userArr[0];
-              item.creator = userArr[1];
-              item.engineType = engineArr[0];
-              item.version = engineArr[1];
-              return item;
-            });
-            this.page.totalPage = res.totalPage;
-          })
+        const res = await api.fetch("/configuration/userKeyValue", params, "get")
+          
+        this.datalist = res.configValueList.map((item) => {
+          const labelValue = item.labelValue;
+          const baseArr = labelValue.split(',');
+          const userArr = baseArr[0].split('-');
+          const engineArr = baseArr[1].split('-');
+          item.user = userArr[0];
+          item.creator = userArr[1];
+          item.engineType = engineArr[0];
+          item.version = engineArr[1];
+          return item;
+        });
+        this.page.totalPage = res.totalPage;
         this.tableLoading = false;
       } catch(err) {
         window.console.log(err);
@@ -387,12 +386,10 @@ export default {
               this.page.pageNow = 1;
             }
             this.isRequesting = true
-            await api.fetch(target, this.modalData, "post").then(async (res) => {
-              window.console.log(res);
-              await this.getTableData();
-              this.cancel();
-              this.$Message.success(this.$t('message.linkis.udf.success'));
-            });
+            await api.fetch(target, this.modalData, "post")
+            await this.getTableData();
+            this.cancel();
+            this.$Message.success(this.$t('message.linkis.udf.success'));
             this.isRequesting = false
           } catch(err) {
             this.isRequesting = false

@@ -347,15 +347,14 @@ export default {
         }
         params.pageNow = this.page.pageNow;
         params.pageSize = this.page.pageSize;
-        await api.fetch("/configuration/baseKeyValue", params, "get")
-          .then((res) => {
-            this.datalist = res.configKeyList.map((item) => {
-              item.formatBoundaryType = this.boundaryTypeMap[item.boundaryType]
-              item.formatValidateType = this.validateTypeList.find(p => p.value === item.validateType).label
-              return item
-            });
-            this.page.totalPage = res.totalPage;
-          })
+        const res = await api.fetch("/configuration/baseKeyValue", params, "get")
+          
+        this.datalist = res.configKeyList.map((item) => {
+          item.formatBoundaryType = this.boundaryTypeMap[item.boundaryType]
+          item.formatValidateType = this.validateTypeList.find(p => p.value === item.validateType).label
+          return item
+        });
+        this.page.totalPage = res.totalPage;
         this.tableLoading = false;
       } catch(err) {
         window.console.log(err);
@@ -416,12 +415,11 @@ export default {
             this.isRequesting = true
             const body = cloneDeep(this.modalData);
             if(!body.engineType || body.engineType === 'all') delete body.engineType
-            await api.fetch(target, body, "post").then(async (res) => {
-              window.console.log(res);
-              await this.getTableData();
-              this.cancel();
-              this.$Message.success(this.$t('message.linkis.udf.success'));
-            });
+            await api.fetch(target, body, "post")
+            await this.getTableData();
+            this.cancel();
+            this.$Message.success(this.$t('message.linkis.udf.success'));
+           
             this.isRequesting = false
           } catch(err) {
             this.isRequesting = false

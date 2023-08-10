@@ -346,16 +346,16 @@ export default {
         }
         params.pageNow = this.page.pageNow;
         params.pageSize = this.page.pageSize;
-        await api.fetch("/configuration/acrossClusterRule/list", params, "get")
-          .then((res) => {
-            this.datalist = res.acrossClusterRuleList.map((item) => {
-              item.userCreator = item.user + "-" + item.creator;
-              item.parsedRules = JSON.parse(item.rules)
-              // item.createTime = new Date(item.createTime).toLocaleString();
-              return item;
-            })
-            this.page.totalPage = res.totalPage;
-          })
+        const res = await api.fetch("/configuration/acrossClusterRule/list", params, "get")
+          
+        this.datalist = res.acrossClusterRuleList.map((item) => {
+          item.userCreator = item.user + "-" + item.creator;
+          item.parsedRules = JSON.parse(item.rules)
+          // item.createTime = new Date(item.createTime).toLocaleString();
+          return item;
+        })
+        this.page.totalPage = res.totalPage;
+          
         this.tableLoading = false;
       } catch(err) {
         window.console.log(err);
@@ -421,12 +421,11 @@ export default {
             // body.MemoryThreshold = Number(body.MemoryThreshold);
             // body.CPUPercentageThreshold = Number(body.CPUPercentageThreshold);
             // body.MemoryPercentageThreshold = Number(body.MemoryPercentageThreshold);
-            await api.fetch(target, body, restfulMode).then(async (res) => {
-              window.console.log(res);
-              await this.getTableData();
-              this.cancel();
-              this.$Message.success(this.$t('message.linkis.udf.success'));
-            });
+            const res = await api.fetch(target, body, restfulMode)
+            window.console.log(res);
+            await this.getTableData();
+            this.cancel();
+            this.$Message.success(this.$t('message.linkis.udf.success'));
             this.isRequesting = false
           } catch(err) {
             this.isRequesting = false
