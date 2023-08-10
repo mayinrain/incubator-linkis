@@ -198,7 +198,7 @@ export default {
                 on: {
                   click: () => {
                     this.showviewlog = true
-                    this.clearLogs();
+                    this.$refs.clearLogs();
                     this.$refs.logPanel.getLogs(0, {
                       applicationName: "linkis-cg-engineconn",
                       emInstance: params.row.ecmInstance,
