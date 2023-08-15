@@ -374,6 +374,7 @@ export default {
         configValue: ''
       }
       this.configOption = [];
+      this.versionOption = [];
     },
     addUserConfig() {
       if(this.isRequesting) return;
@@ -409,6 +410,7 @@ export default {
       this.modalData = {
         user, creator, engineType, version, configKey: key, configValue
       };
+      this.versionOption = [{label: version, value: version}];
       this.showCreateModal = true;
       this.mode = 'edit';
     },

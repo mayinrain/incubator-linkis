@@ -360,6 +360,11 @@ export default {
       evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
       return link.dispatchEvent(evObj)
     },
+    pause(msec = 1000) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, msec);
+      })
+    },
     async downloadConfirm() {
       const splitor = this.download.format === '1' ? 'csv' : 'xlsx';
       const charset = this.download.coding === '1' ? 'utf-8' : 'gbk';
@@ -399,14 +404,27 @@ export default {
       const eventList = [];
       let flag = null;
       if (this.isAll && !this.isExcel && this.allDownload) {
-        this.allPath.forEach(path => {
+        let count = 0
+        for(let path of this.allPath) {
           let temUrl = url;
           temUrl += `&path=${path}`
           const name = `ResultSet${Number(path.substring(temPath.lastIndexOf('/')).split('.')[0].split('_')[1]) + 1}`
           temUrl += '&outputFileName=' + name
           const event = this.downloadFromHref(temUrl)
           eventList.push(event);
-        });
+          if(++count >= 10) {
+            await this.pause(1000);
+            count = 0;
+          }
+        }
+        // this.allPath.forEach(path => {
+        //   let temUrl = url;
+        //   temUrl += `&path=${path}`
+        //   const name = `ResultSet${Number(path.substring(temPath.lastIndexOf('/')).split('.')[0].split('_')[1]) + 1}`
+        //   temUrl += '&outputFileName=' + name
+        //   const event = this.downloadFromHref(temUrl)
+        //   eventList.push(event);
+        // });
       } else {
         url += `&path=${temPath}` + '&outputFileName=' + filename
         flag = this.downloadFromHref(url);

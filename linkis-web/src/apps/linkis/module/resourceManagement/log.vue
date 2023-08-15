@@ -81,16 +81,16 @@ export default {
     elementResizeEvent.unbind(this.$el);
   },
   methods: {
-    clearLogs() {
-      this.logs = {
-        all: ''
-      }
-      this.tabName = 'stdout'
-    },
     // Toggle pagination(切换分页)
     change(val) {
       this.page.pageNow = val;
       this.getLogs((val - 1) * this.page.pageSize)
+    },
+    clearLogs() {
+      this.logs = {
+        all: '',
+      }
+      this.tabName = 'stdout'
     },
     async getLogs(fromLine, param) {
       if (param) {
