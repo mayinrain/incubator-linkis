@@ -141,6 +141,12 @@ export default {
           className: 'table-project-column'
         },
         {
+          title: this.$t('message.linkis.tableColumns.status'),
+          key: 'status',
+          minWidth: 100,
+          className: 'table-project-column'
+        },
+        {
           title: this.$t('message.linkis.tableColumns.label'),
           key: 'labelValue',
           minWidth: 300,
@@ -343,6 +349,7 @@ export default {
         }
       }
       if (e.engineType) url += `engineType=${e.engineType}&`
+      if (e.status) url += `status=${e.status}&`
       if (this.page.pageNow) url += `pageNow=${this.page.pageNow}&`
       if (this.page.pageSize) url += `pageSize=${this.page.pageSize}`
       api.fetch(url,'get').then((res)=>{

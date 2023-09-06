@@ -30,7 +30,7 @@
       closable
     >
       <TabPane
-        v-for="menu in menuList"
+        v-for="(menu, index) in menuList"
         :key="menu.categoryId"
         :label="menu.categoryName"
         :name="`${menu.categoryName}`"
@@ -47,7 +47,7 @@
           :iseditListItem="iseditListItem"
           :isdeleteListItem="isdeleteListItem"
           :isOpenAdd="isOpenAdd"
-          :currentCardIndex.sync="currentCardIndex"
+          :currentCardIndex.sync="currentCardIndex[index]"
         >
         </cardList>
       </TabPane>
@@ -275,7 +275,7 @@ export default {
           },
         ],
       },
-      currentCardIndex: 0,
+      currentCardIndex: [],
       versionList: [] //Version list
     };
   },
@@ -288,6 +288,9 @@ export default {
       this.$nextTick(() => {
         this.getAppVariable(this.menuList[0].categoryName || "");
         this.currentTabName = `${this.menuList[0].categoryName}`;
+        for(let i = 0;i < this.menuList.length; i++) {
+          this.currentCardIndex.push(0)
+        }
         if (this.menuList[0] && this.menuList[0].childCategory && this.menuList[0].childCategory.length) {
           this.subCategory = {
             [this.menuList[0].categoryName]: this.menuList[0].childCategory[0]
@@ -466,11 +469,11 @@ export default {
         let type = ''
         // Determine whether there is a sub-item, and if it exists, splicing(判断是否存在子项，如果存在就进行拼接)
         if (menuListItem.childCategory && menuListItem.childCategory.length) { 
-          this.currentCardIndex = 0;
+          // this.currentCardIndex[index] = 0;
           if (condition === 'new') {
-            this.currentCardIndex = menuListItem.childCategory.length - 1;
+            this.currentCardIndex[index] = menuListItem.childCategory.length - 1;
           }
-          let currentItem = menuListItem.childCategory[this.currentCardIndex];
+          let currentItem = menuListItem.childCategory[this.currentCardIndex[index]];
           if (!this.subCategory[menuListItem.categoryName] || condition === 'new') {
             this.subCategory[menuListItem.categoryName] = currentItem
           }
