@@ -391,9 +391,6 @@ export default {
           await this.confirmDelete(data);
           await this.getTableData();
         },
-        onCancel: () => {
-          window.console.log('cancel');
-        }
       })
     },
     async confirmDelete(data) {

@@ -469,9 +469,6 @@ export default {
         onOk: async () => {
           await this.confirmDelete(data);
           await this.getTableData();
-        },
-        onCancel: () => {
-          window.console.log('cancel');
         }
       })
     },
@@ -504,9 +501,6 @@ export default {
           await this.confirmEnable(data.id, data.isValid);
           await this.getTableData();
         },
-        onCancel: () => {
-          window.console.log('cancel');
-        }
       })
     },
     async confirmDelete(data) {
