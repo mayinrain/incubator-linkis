@@ -372,7 +372,6 @@ export default {
           
         this.tableLoading = false;
       } catch(err) {
-        window.console.log(err);
         this.tableLoading = false;
       }
 
@@ -443,7 +442,6 @@ export default {
             this.isRequesting = false
           } catch(err) {
             this.isRequesting = false
-            window.console.log(err);
           }
         } else {
           this.$Message.error(this.$t('message.linkis.error.validate'));
@@ -517,7 +515,7 @@ export default {
         await api.fetch('/configuration/acrossClusterRule/delete', { username, creator }, 'delete');
         this.$Message.success(this.$t('message.linkis.ipListManagement.deleteSuccess'));
       } catch(err) {
-        window.console.log(err);
+        return;
       }
     },
     thresholdValidator (rule, val, cb) {

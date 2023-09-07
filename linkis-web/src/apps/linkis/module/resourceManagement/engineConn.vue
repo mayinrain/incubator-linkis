@@ -260,7 +260,6 @@ export default {
         this.engineTypes = data && data.engineType ? data.engineType : []
         this.loading = false;
       } catch (err) {
-        window.console.log(err)
         this.loading = false;
       }
     },
@@ -283,7 +282,7 @@ export default {
         let list = healthyStatusList.nodeStatus || [];
         this.healthyStatusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // Get a list of states for a search(获取搜索的状态列表)
@@ -293,7 +292,7 @@ export default {
         let list = statusList.nodeStatus || [];
         this.statusList = [...list];
       } catch (err) {
-        window.console.log(err)
+        return;
       }
     },
     // add tag(添加tag)
