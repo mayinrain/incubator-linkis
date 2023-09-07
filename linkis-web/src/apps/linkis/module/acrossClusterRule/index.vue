@@ -493,7 +493,7 @@ export default {
         }
           
       } catch (err) {
-        window.console.warn(err);
+        return;
       }
         
       

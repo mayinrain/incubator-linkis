@@ -444,7 +444,6 @@ export default {
         // 传回的是Byte
         this.$Message.success(this.$t('message.linkis.killFinishedInfo', { killEngineNum, memory: memory / 1024 / 1024 / 1024, cores }))
       } catch (err) {
-        window.console.warn(err);
         this.killInfo = {
           curInstance: '',
           all: 0,

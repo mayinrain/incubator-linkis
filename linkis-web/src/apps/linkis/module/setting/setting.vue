@@ -308,8 +308,8 @@ export default {
   },
 
   methods: {
-    getMenuList(condition) {
-      api.fetch("/configuration/getCategory", "get").then((rst) => {
+    async getMenuList(condition) {
+      await api.fetch("/configuration/getCategory", "get").then((rst) => {
         this.menuList = rst.Category || [];
         this.$nextTick(() => {
           if (this.currentTabName) {
@@ -325,6 +325,7 @@ export default {
 
     getAppVariable(type = '') {
       this.activeMenu = type;
+      
       let parameter = type.split("-"); // cut directory name(切割目录name)
       // If there is only a first-level directory, it will directly return ['creator'], if it is a second-level directory, ['creator', 'engineType', 'version'](如果只有一级目录则直接返回['creator'],如果为二级目录则['creator', 'engineType', 'version'])
       api
@@ -564,33 +565,45 @@ export default {
     },
 
     //delete directory application(删除目录应用)
-    removeTab(name) {
+    async removeTab(name) {
       //Find the data in the menuList of the tab you clicked to delete(找到点击删除的tab 在menuList里的数据)
       let menuItem = this.menuList.find((item) => item.categoryName === name);
       //Determine whether the current active tab is the same as the tab currently clicked to delete(判断当前的活动tab是否和当前点击删除的tab一样)
       const activeIndex = this.menuList.findIndex((item) => item.categoryName === this.currentTabName) + 1;
       const curIndex = this.menuList.findIndex((item) => item.categoryName === name);
+      const lastIndex = this.menuList.findIndex((item) => item.categoryName === this.currentTabName);
+      const lastName = this.menuList[lastIndex].categoryName
       if (curIndex === activeIndex) {
         this.menuList.splice(curIndex, 1);
-        api
-          .fetch(
-            "/configuration/deleteCategory",
-            { categoryId: menuItem.categoryId },
-            "post"
-          )
-          .then(() => {
-            this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
-            this.$Message.success(`删除${name}应用成功`);
-          });
+        try {
+          await api
+            .fetch(
+              "/configuration/deleteCategory",
+              { categoryId: menuItem.categoryId },
+              "post"
+            )
+            .then(async () => {
+              // await this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
+              
+              this.clickTabChange(lastName)
+              this.$Message.success(`删除${name}应用成功`);
+            });
+        } catch (err) {
+          this.$Message.error(`删除${name}应用失败`);
+        }
+        
+        
       } else {
-        api
+        await api
           .fetch(
             "/configuration/deleteCategory",
             { categoryId: menuItem.categoryId },
             "post"
           )
-          .then(() => {
-            this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
+          .then(async () => {
+            // await this.getMenuList(); //Call getMenuList to re-render the newly added menuList data(调用getMenuList 重新渲染新增的menuList数据)
+            
+            this.clickTabChange(lastName)
             this.$Message.success(`删除${name}应用成功`);
           });
       }
