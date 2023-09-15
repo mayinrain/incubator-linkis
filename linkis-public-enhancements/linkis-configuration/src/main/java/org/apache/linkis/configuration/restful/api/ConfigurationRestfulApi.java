@@ -187,11 +187,7 @@ public class ConfigurationRestfulApi {
       temp.put("validateRange", configKey.getValidateRange());
       temp.put("boundaryType", configKey.getBoundaryType());
       temp.put("defaultValue", configKey.getDefaultValue());
-      if (StringUtils.isNotBlank(configKey.getTemplateRequired())) {
-        temp.put("require", configKey.getTemplateRequired().equals("1"));
-      } else {
-        temp.put("require", "false");
-      }
+      temp.put("require", configKey.getTemplateRequired());
       filterResult.add(temp);
     }
 
@@ -371,6 +367,7 @@ public class ConfigurationRestfulApi {
       throws ConfigurationException {
     if (StringUtils.isNotBlank(sparkConf)) {
       // Check if there are any duplicates in spark. conf
+      // spark.conf : spark.shuffle.compress=ture;spark.executor.memory=4g
       String[] split = sparkConf.split(";");
       int setSize =
           Arrays.stream(split).map(s -> s.split("=")[0].trim()).collect(Collectors.toSet()).size();
@@ -477,7 +474,7 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "creator", required = false, defaultValue = "*") String creator,
       @RequestParam(value = "configKey") String configKey)
       throws ConfigurationException {
-    String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+    String username = ModuleUserUtils.getOperationUser(req, "getKeyValue");
     if (engineType.equals("*") && !version.equals("*")) {
       return Message.error("When engineType is any engine, the version must also be any version");
     }
@@ -564,7 +561,7 @@ public class ConfigurationRestfulApi {
   @RequestMapping(path = "/keyvalue", method = RequestMethod.DELETE)
   public Message deleteKeyValue(HttpServletRequest req, @RequestBody Map<String, Object> json)
       throws ConfigurationException {
-    String username = ModuleUserUtils.getOperationUser(req, "saveKey");
+    String username = ModuleUserUtils.getOperationUser(req, "deleteKeyValue");
     String engineType = (String) json.getOrDefault("engineType", "*");
     String version = (String) json.getOrDefault("version", "*");
     String creator = (String) json.getOrDefault("creator", "*");
@@ -722,9 +719,6 @@ public class ConfigurationRestfulApi {
     if (null == boundaryType) {
       return Message.error("boundaryType cannot be empty");
     }
-    if (null == configKey.getTemplateRequired()) {
-      configKey.setTemplateRequired("1");
-    }
     if (StringUtils.isNotEmpty(defaultValue)
         && !validatorManager
             .getOrCreateValidator(validateType)
@@ -777,7 +771,7 @@ public class ConfigurationRestfulApi {
       @RequestParam(value = "pageNow", required = false, defaultValue = "1") Integer pageNow,
       @RequestParam(value = "pageSize", required = false, defaultValue = "20") Integer pageSize)
       throws ConfigurationException {
-    checkAdmin(ModuleUserUtils.getOperationUser(req, "getUserKeyValue"));
+    String username = ModuleUserUtils.getOperationUser(req, "getUserKeyValue");
     if (StringUtils.isBlank(engineType)) {
       engineType = null;
     }
@@ -790,6 +784,11 @@ public class ConfigurationRestfulApi {
     if (StringUtils.isBlank(user)) {
       user = null;
     }
+
+    if (!org.apache.linkis.common.conf.Configuration.isAdmin(username) && !username.equals(user)) {
+      return Message.error("Only admin can query other user configuration data");
+    }
+
     PageHelper.startPage(pageNow, pageSize);
     List<ConfigUserValue> list;
     try {
