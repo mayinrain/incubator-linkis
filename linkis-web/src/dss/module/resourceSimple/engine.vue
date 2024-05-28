@@ -49,7 +49,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead')) || subitem.creator === item"
+                  v-if="shouldRender(subItem, item)"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -92,7 +92,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead')) || subitem.creator === item"
+                  v-if="shouldRender(subItem, item)"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -135,7 +135,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead')) || subitem.creator === item"
+                  v-if="shouldRender(subItem, item)"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -271,6 +271,14 @@ export default {
         default:
           return params;
       }
+    },
+    shouldRender(subitem, item) {
+      const isEngineTypeOrStatusMatch = subitem.engineType === item || subitem.engineStatus === item;
+      const isIdleAndErrorShuttingDownOrDead = 
+        (item === 'Idle' && ['Error', 'ShuttingDown', 'Dead'].includes(subitem.engineStatus));
+      const isCreatorMatch = subitem.creator === item;
+
+      return isEngineTypeOrStatusMatch || isIdleAndErrorShuttingDownOrDead ||isCreatorMatch;
     },
     killJob() {
       if (this.loading) return this.$Message.warning(this.$t('message.common.resourceSimple.DDJK'));
