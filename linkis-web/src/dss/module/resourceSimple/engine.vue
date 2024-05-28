@@ -41,7 +41,7 @@
           class="engine-list"
           v-for="item in ideClassList"
           :key="item">
-          <span class="engline-name">{{ calssifyName(item) }}</span>
+          <span class="engline-name" :title="calssifyName(item)">{{ calssifyName(item) }}</span>
           <ul class="engine-ul">
             <template
               v-for="(subitem, index) in ideEngineList">
@@ -49,7 +49,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
+                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead')) || subitem.creator === item"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -84,7 +84,7 @@
           class="engine-list"
           v-for="item in boardClassList"
           :key="item">
-          <span class="engline-name">{{ calssifyName(item) }}</span>
+          <span class="engline-name" :title="calssifyName(item)">{{ calssifyName(item) }}</span>
           <ul class="engine-ul">
             <template
               v-for="(subitem, index) in boardEngineList">
@@ -92,7 +92,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
+                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead')) || subitem.creator === item"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -127,7 +127,7 @@
           class="engine-list"
           v-for="item in otherClassList"
           :key="item">
-          <span class="engline-name">{{ calssifyName(item) }}</span>
+          <span class="engline-name" :title="calssifyName(item)">{{ calssifyName(item) }}</span>
           <ul class="engine-ul">
             <template
               v-for="(subitem, index) in otherEngineList">
@@ -135,7 +135,7 @@
                 <li
                   class="engine-li"
                   :class="[{'active': subitem.isActive}, supportColor(subitem.engineStatus)]"
-                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead'))"
+                  v-if="subitem.engineType === item || subitem.engineStatus === item || (item === 'Idle' && (subitem.engineStatus === 'Error' || subitem.engineStatus === 'ShuttingDown' || subitem.engineStatus === 'Dead')) || subitem.creator === item"
                   :key="index"
                   @click="subitem.isActive = !subitem.isActive">
                   <span class="ellipsis">{{ calssifyName(subitem.engineType) }}</span>
@@ -180,6 +180,10 @@ export default {
         {
           value: 1,
           label: this.$t('message.common.resourceSimple.AZT'),
+        },
+        {
+          value: 2,
+          label: this.$t('message.common.resourceSimple.AYY'),
         },
       ],
       ideEngineList: [],
@@ -342,6 +346,12 @@ export default {
         engineList.map((item) => {
           if (!classList.includes(item.engineType)) {
             classList.push(item.engineType);
+          }
+        });
+      } else if(selectData === 2) {
+        engineList.map((item) => {
+          if (!classList.includes(item.creator)) {
+            classList.push(item.creator);
           }
         });
       } else {
