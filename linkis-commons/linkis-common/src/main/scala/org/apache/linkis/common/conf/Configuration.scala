@@ -76,6 +76,18 @@ object Configuration extends Logging {
       "The request interface %s is abnormal. You can try to troubleshoot common problems in the knowledge base document"
     )
 
+  val LINKIS_TOKEN = CommonVars("wds.linkis.token", "LINKIS-AUTH-eTaYLbQpmIulPyrXcMl")
+
+  val GLOBAL_CONF_CHN_NAME = "全局设置"
+
+  val GLOBAL_CONF_CHN_OLDNAME = "通用设置"
+
+  val GLOBAL_CONF_CHN_EN_NAME = "GlobalSettings"
+
+  val GLOBAL_CONF_SYMBOL = "*"
+
+  val GLOBAL_CONF_LABEL = "*-*,*-*"
+
   def isAdminToken(token: String): Boolean = {
     if (StringUtils.isBlank(token)) {
       false
@@ -133,6 +145,13 @@ object Configuration extends Logging {
     val adminUsers = GOVERNANCE_STATION_ADMIN.getHotValue.split(",")
     val historyAdminUsers = JOB_HISTORY_ADMIN.getHotValue.split(",")
     (adminUsers ++ historyAdminUsers).distinct
+  }
+
+  def getGlobalCreator(creator: String): String = creator match {
+    case Configuration.GLOBAL_CONF_CHN_NAME | Configuration.GLOBAL_CONF_CHN_OLDNAME |
+        Configuration.GLOBAL_CONF_CHN_EN_NAME =>
+      GLOBAL_CONF_SYMBOL
+    case _ => creator
   }
 
 }

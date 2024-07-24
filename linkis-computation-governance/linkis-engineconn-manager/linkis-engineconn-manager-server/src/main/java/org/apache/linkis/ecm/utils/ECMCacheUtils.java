@@ -15,9 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.linkis.gateway.springcloud.http;
+package org.apache.linkis.ecm.utils;
 
-public class SpringCloudGatewayConstant {
+import org.apache.linkis.common.ServiceInstance;
+import org.apache.linkis.manager.common.protocol.engine.EngineStopRequest;
 
-  public static final String FIXED_INSTANCE = "FIXED_INSTANCE";
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+public class ECMCacheUtils {
+  private static Cache<ServiceInstance, EngineStopRequest> ecStopRequestCache =
+      CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
+
+  public static void putStopECToCache(
+      ServiceInstance serviceInstance, EngineStopRequest engineStopRequest) {
+    ecStopRequestCache.put(serviceInstance, engineStopRequest);
+  }
+
+  public static EngineStopRequest getStopEC(ServiceInstance serviceInstance) {
+    return ecStopRequestCache.getIfPresent(serviceInstance);
+  }
 }

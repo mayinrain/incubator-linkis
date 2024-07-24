@@ -397,7 +397,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     if (!fileSystem.exists(fsPath)) {
       return Message.ok().data("dirFileTrees", null);
     }
@@ -411,21 +411,22 @@ public class FsRestfulApi {
     dirFileTree.setName(new File(path).getName());
     dirFileTree.setChildren(new ArrayList<>());
     Set<String> fileNameSet = new HashSet<>();
-    fileNameSet.add(dirFileTree.getName().trim());
+    fileNameSet.add(dirFileTree.getPath().trim());
     FsPathListWithError fsPathListWithError = fileSystem.listPathWithError(fsPath);
     if (fsPathListWithError != null) {
       for (FsPath children : fsPathListWithError.getFsPaths()) {
         DirFileTree dirFileTreeChildren = new DirFileTree();
         dirFileTreeChildren.setName(new File(children.getPath()).getName());
-        if (fileNameSet.contains(dirFileTreeChildren.getName().trim())) {
-          LOGGER.info("File {} is duplicate", dirFileTreeChildren.getName());
-          continue;
-        } else {
-          fileNameSet.add(dirFileTreeChildren.getName().trim());
-        }
+
         dirFileTreeChildren.setPath(fsPath.getFsType() + "://" + children.getPath());
         dirFileTreeChildren.setProperties(new HashMap<>());
         dirFileTreeChildren.setParentPath(fsPath.getSchemaPath());
+        if (fileNameSet.contains(dirFileTreeChildren.getPath().trim())) {
+          LOGGER.info("File {} is duplicate", dirFileTreeChildren.getPath());
+          continue;
+        } else {
+          fileNameSet.add(dirFileTreeChildren.getPath().trim());
+        }
         if (!children.isdir()) {
           dirFileTreeChildren.setIsLeaf(true);
           dirFileTreeChildren.getProperties().put("size", String.valueOf(children.getLength()));
@@ -470,7 +471,7 @@ public class FsRestfulApi {
       FsPath fsPath = new FsPath(path);
       // TODO: 2018/11/29 Judging the directory, the directory cannot be
       // downloaded(判断目录,目录不能下载)
-      FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+      FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
       if (!fileSystem.exists(fsPath)) {
         throw WorkspaceExceptionManager.createException(80011, path);
       }
@@ -544,7 +545,7 @@ public class FsRestfulApi {
     }
     String userName = ModuleUserUtils.getOperationUser(req, "fileInfo " + path);
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80012);
@@ -624,7 +625,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     // Throws an exception if the file does not have read access(如果文件没读权限，抛出异常)
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80012);
@@ -849,7 +850,7 @@ public class FsRestfulApi {
       LoggerUtils.setJobIdMDC("resultsetToExcelThread_" + userName);
       LOGGER.info("userName {} start to resultsetToExcel File {}", userName, path);
       FsPath fsPath = new FsPath(path);
-      FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+      FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
       boolean isLimitDownloadSize = RESULT_SET_DOWNLOAD_IS_LIMIT.getValue();
       Integer csvDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_CSV.getValue();
       Integer excelDownloadSize = RESULT_SET_DOWNLOAD_MAX_SIZE_EXCEL.getValue();
@@ -966,7 +967,7 @@ public class FsRestfulApi {
       LoggerUtils.setJobIdMDC("resultsetsToExcelThread_" + userName);
       LOGGER.info("userName {} start to resultsetsToExcel File {}", userName, path);
       FsPath fsPath = new FsPath(path);
-      FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+      FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
       if (StringUtils.isEmpty(path)) {
         throw WorkspaceExceptionManager.createException(80004, path);
       }
@@ -1079,7 +1080,7 @@ public class FsRestfulApi {
     String suffix = path.substring(path.lastIndexOf("."));
     FsPath fsPath = new FsPath(path);
     Map<String, Object> res = new HashMap<String, Object>();
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     try (InputStream in = fileSystem.read(fsPath)) {
       if (".xlsx".equalsIgnoreCase(suffix) || ".xls".equalsIgnoreCase(suffix)) {
         List<List<String>> info;
@@ -1174,7 +1175,7 @@ public class FsRestfulApi {
     String suffix = path.substring(path.lastIndexOf("."));
     FsPath fsPath = new FsPath(path);
     Map<String, List<Map<String, String>>> sheetInfo;
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     try (InputStream in = fileSystem.read(fsPath)) {
       if (".xlsx".equalsIgnoreCase(suffix)) {
         sheetInfo = XlsxUtils.getAllSheetInfo(in, null, hasHeader);
@@ -1252,7 +1253,7 @@ public class FsRestfulApi {
       throw WorkspaceExceptionManager.createException(80010, userName, path);
     }
     FsPath fsPath = new FsPath(path);
-    FileSystem fileSystem = fsService.getFileSystem(userName, fsPath);
+    FileSystem fileSystem = fsService.getFileSystemForRead(userName, fsPath);
     if (!fileSystem.canRead(fsPath)) {
       throw WorkspaceExceptionManager.createException(80018);
     }

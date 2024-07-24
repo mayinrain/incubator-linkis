@@ -53,6 +53,7 @@ import org.apache.linkis.manager.label.service.NodeLabelService;
 import org.apache.linkis.rpc.Sender;
 import org.apache.linkis.server.Message;
 import org.apache.linkis.server.utils.ModuleUserUtils;
+import org.apache.linkis.storage.utils.StorageUtils;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -732,6 +733,45 @@ public class EngineRestfulApi {
         .data("result", engineOperateResponse.getResult())
         .data("errorMsg", engineOperateResponse.errorMsg())
         .data("isError", engineOperateResponse.isError());
+  }
+
+  @ApiOperation(
+      value = "kill egineconns of a ecm",
+      notes = "Kill engine after updating configuration",
+      response = Message.class)
+  @ApiImplicitParams({
+    @ApiImplicitParam(name = "creator", dataType = "String", required = true, example = "IDE"),
+    @ApiImplicitParam(
+        name = "engineType",
+        dataType = "String",
+        required = true,
+        example = "hive-2.3.3"),
+  })
+  @ApiOperationSupport(ignoreParameters = {"param"})
+  @RequestMapping(path = "/rm/killEngineByUpdateConfig", method = RequestMethod.POST)
+  public Message killEngineByUpdateConfig(HttpServletRequest req, @RequestBody JsonNode jsonNode)
+      throws AMErrorException {
+    String userName = ModuleUserUtils.getOperationUser(req);
+    String jvmUser = StorageUtils.getJvmUser();
+    if (jvmUser.equals(userName)) {
+      return Message.error(
+          jvmUser + " users do not support this feature (" + jvmUser + " 用户不支持此功能)");
+    }
+    JsonNode creator = jsonNode.get("creator");
+    if (null == creator || StringUtils.isBlank(creator.textValue())) {
+      return Message.error("instance is null in the parameters of the request(请求参数中【creator】为空)");
+    }
+    String creatorStr = Configuration.getGlobalCreator(creator.textValue());
+    String engineType = "";
+    if (null != jsonNode.get("engineType")) {
+      engineType = jsonNode.get("engineType").textValue();
+    }
+    if (StringUtils.isNotBlank(engineType)
+        && AMConfiguration.isUnAllowKilledEngineType(engineType)) {
+      return Message.error("multi user engine does not support this feature(多用户引擎不支持此功能)");
+    }
+    engineStopService.stopUnlockECByUserCreatorAndECType(userName, creatorStr, engineType);
+    return Message.ok("Kill engineConn succeed");
   }
 
   static ServiceInstance getServiceInstance(JsonNode jsonNode) throws AMErrorException {
